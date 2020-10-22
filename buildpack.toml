@@ -1,0 +1,15 @@
+api = "0.2"
+
+[buildpack]
+id = "jkutner/minecraft"
+version = "0.1"
+name = "Minecraft"
+
+[[stacks]]
+id = "io.buildpacks.stacks.bionic"
+
+[[stacks]]
+id = "heroku-18"
+
+[[stacks]]
+id = "io.buildpacks.samples.stacks.bionic"
