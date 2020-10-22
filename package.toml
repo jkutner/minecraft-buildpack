@@ -1,8 +1,8 @@
 [buildpack]
-uri = "samples/buildpacks/hello-universe/"
+uri = "."
 
 [[dependencies]]
 uri = "https://github.com/heroku/heroku-buildpack-jvm-common/releases/download/v106/heroku-jvm-common-cnb-v106.tgz"
 
 [[dependencies]]
-uri = "https://cnb-shim.herokuapp.com/v1/heroku/python?version=0.2&name=Python"
+uri = "minecraft/"

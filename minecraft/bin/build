@@ -12,6 +12,7 @@ if compgen -G "${env_dir}/*" > /dev/null; then
   done
 fi
 
+echo ""
 echo "[minecraft]"
 
 # create a layer for minecraft
@@ -35,11 +36,15 @@ cp $CNB_BUILDPACK_DIR/sbin/sync $minecraft_layer/bin/mc-sync
 cp $CNB_BUILDPACK_DIR/public/index.rhtml .
 
 chmod +x $minecraft_layer/bin/minecraft
-chmod +x $minecraft_layer/bin/sync
+chmod +x $minecraft_layer/bin/mc-sync
 
 echo "launch = true" > ${minecraft_layer}.toml
 
-# TODO write launch.toml
+cat <<EOF > ${layers_dir}/launch.toml
+[[processes]]
+type = "web"
+command = "minecraft"
+EOF
 
 echo ""
 echo "[ngrok]"
