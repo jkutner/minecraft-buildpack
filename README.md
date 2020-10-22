@@ -28,3 +28,5 @@ Open a browser to `http://localhost:8080`, which will display the address of the
 ```
 Server available at: 0.tcp.ngrok.io:17003
 ```
+
+Copy the `0.tcp.ngrok.io:17003` part, and paste it into your local Minecraft app as the server name.
