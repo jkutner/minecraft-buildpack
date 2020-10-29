@@ -17,7 +17,8 @@ jobs:
                 #!/usr/bin/env bash
                 set -euo pipefail
                 GO111MODULE=on go get -u -ldflags="-s -w" github.com/google/go-containerregistry/cmd/crane
-            - name: Install jq
+            - id: jq
+              name: Install jq
               run: |
                 #!/usr/bin/env bash
 
@@ -25,7 +26,8 @@ jobs:
 
                 sudo apt update -y
                 sudo apt install jq -y
-            - name: Install pack
+            - id: pack
+              name: Install pack
               run: |
                 #!/usr/bin/env bash
 
@@ -62,6 +64,9 @@ jobs:
                 chmod +x "${HOME}"/bin/yj
               env:
                 YJ_VERSION: 5.0.0
+            - id: checkout
+              name: Checkout code
+              uses: actions/checkout@v2
             - id: version
               name: Compute Version
               run: |
@@ -69,7 +74,7 @@ jobs:
 
                 set -euo pipefail
 
-                VERSION="$(cat "${HOME}"/buildpack.toml | yj -t | jq -r .buildpack.version)"
+                VERSION="$(cat buildpack.toml | yj -t | jq -r .buildpack.version)"
 
                 echo "::set-output name=version::${VERSION}"
                 echo "Selected version ${VERSION} from buildpack.toml"
