@@ -95,7 +95,7 @@ jobs:
                 else
                   pack package-buildpack \
                     "${PACKAGE}:${VERSION}" \
-                    --config "${HOME}"/package.toml
+                    --config package.toml
                 fi
               env:
                 PACKAGE: gcr.io/jkutner/minecraft
