@@ -58,8 +58,8 @@ jobs:
                   --silent \
                   "https://github.com/sclevine/yj/releases/download/v${YJ_VERSION}/yj-linux" \
                   | tar -C "${HOME}"/bin/ -xzv yj
-                env:
-                  YJ_VERSION: 5.0.0
+              env:
+                YJ_VERSION: 5.0.0
             - id: version
               name: Compute Version
               run: |
