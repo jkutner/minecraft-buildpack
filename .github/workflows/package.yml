@@ -88,7 +88,7 @@ jobs:
                 if [[ -n "${PUBLISH+x}" ]]; then
                   pack package-buildpack \
                     "${PACKAGE}:${VERSION}" \
-                    --config "${HOME}"/package.toml \
+                    --config package.toml \
                     --publish
 
                   echo "::set-output name=digest::$(crane digest "${PACKAGE}:${VERSION}")"
