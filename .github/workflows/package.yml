@@ -132,7 +132,7 @@ jobs:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - id: register
               name: Register Buildpack
-              uses: docker://ghcr.io/buildpacks/actions/registry
+              uses: docker://ghcr.io/buildpacks/actions/registry:main
               with:
                 token:   ${{ secrets.GITHUB_TOKEN }}
                 id:      jkutner/minecraft
