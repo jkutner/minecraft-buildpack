@@ -1,4 +1,4 @@
-name: Create Package
+name: Buildpackage
 on:
     release:
         types:
@@ -53,11 +53,11 @@ jobs:
                 echo "${HOME}/bin" >> "${GITHUB_PATH}"
 
                 curl \
+                  --output "${HOME}"/bin/yj \
                   --location \
                   --show-error \
                   --silent \
-                  "https://github.com/sclevine/yj/releases/download/v${YJ_VERSION}/yj-linux" \
-                  | tar -C "${HOME}"/bin/ -xzv yj
+                  "https://github.com/sclevine/yj/releases/download/v${YJ_VERSION}/yj-linux"
               env:
                 YJ_VERSION: 5.0.0
             - id: version
