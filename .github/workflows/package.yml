@@ -137,4 +137,4 @@ jobs:
                 token:   ${{ secrets.PUBLIC_REPO_TOKEN }}
                 id:      jkutner/minecraft
                 version: ${{ steps.version.outputs.version }}
-                address: ghcr.io/jkutner/buildpacks/minecraft@{{ steps.package.outputs.digest }}
+                address: ghcr.io/jkutner/buildpacks/minecraft@${{ steps.package.outputs.digest }}
