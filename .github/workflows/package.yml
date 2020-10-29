@@ -1,5 +1,5 @@
 name: Create Package
-"on":
+on:
     release:
         types:
             - published
@@ -17,6 +17,14 @@ jobs:
                 #!/usr/bin/env bash
                 set -euo pipefail
                 GO111MODULE=on go get -u -ldflags="-s -w" github.com/google/go-containerregistry/cmd/crane
+            - name: Install jq
+              run: |
+                #!/usr/bin/env bash
+
+                set -euo pipefail
+
+                apt update -y
+                apt install jq -y
             - name: Install pack
               run: |
                 #!/usr/bin/env bash
@@ -34,6 +42,24 @@ jobs:
                   | tar -C "${HOME}"/bin/ -xzv pack
               env:
                 PACK_VERSION: 0.14.1
+            - id: yj
+              name: Install yj
+              run: |
+                #!/usr/bin/env bash
+
+                set -euo pipefail
+
+                mkdir -p "${HOME}"/bin
+                echo "${HOME}/bin" >> "${GITHUB_PATH}"
+
+                curl \
+                  --location \
+                  --show-error \
+                  --silent \
+                  "https://github.com/sclevine/yj/releases/download/v${YJ_VERSION}/yj-linux" \
+                  | tar -C "${HOME}"/bin/ -xzv yj
+                env:
+                  YJ_VERSION: 5.0.0
             - id: version
               name: Compute Version
               run: |
@@ -41,19 +67,10 @@ jobs:
 
                 set -euo pipefail
 
-                if [[ ${GITHUB_REF} =~ refs/tags/v([0-9]+\.[0-9]+\.[0-9]+) ]]; then
-                  VERSION=${BASH_REMATCH[1]}
-                elif [[ ${GITHUB_REF} =~ refs/heads/(.+) ]]; then
-                  VERSION=${BASH_REMATCH[1]}
-                else
-                  VERSION=$(git rev-parse --short HEAD)
-                fi
+                VERSION="$(cat buildpack.toml | yj -t | jq -r .buildpack.version)"
 
                 echo "::set-output name=version::${VERSION}"
-                echo "Selected ${VERSION} from
-                  * ref: ${GITHUB_REF}
-                  * sha: ${GITHUB_SHA}
-                "
+                echo "Selected version ${VERSION} from buildpack.toml"
             - id: package
               name: Package Buildpack
               run: |
