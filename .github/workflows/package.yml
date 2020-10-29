@@ -9,6 +9,9 @@ jobs:
         runs-on:
             - ubuntu-latest
         steps:
+            - id: checkout
+              name: Checkout code
+              uses: actions/checkout@v2
             - if: ${{ github.event_name != 'pull_request' || ! github.event.pull_request.head.repo.fork }}
               name: Login to GitHub Package Registry
               uses: docker/login-action@v1
@@ -71,9 +74,6 @@ jobs:
                 chmod +x "${HOME}"/bin/yj
               env:
                 YJ_VERSION: 5.0.0
-            - id: checkout
-              name: Checkout code
-              uses: actions/checkout@v2
             - id: version
               name: Compute Version
               run: |
@@ -105,7 +105,7 @@ jobs:
                     --config package.toml
                 fi
               env:
-                PACKAGE: ghcr.io/${{ github.repository_owner }}/minecraft/jkutner_minecraft
+                PACKAGE: ghcr.io/${{ github.repository_owner }}/buildpacks/jkutner_minecraft
                 PUBLISH: "true"
                 VERSION: ${{ steps.version.outputs.version }}
             - name: Update release with digest
@@ -130,3 +130,11 @@ jobs:
               env:
                 DIGEST: ${{ steps.package.outputs.digest }}
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - id: register
+              name: Register Buildpack
+              uses: docker://ghcr.io/buildpacks/actions/registry
+              with:
+                token:   {{ secrets.GITHUB_TOKEN }}
+                id:      jkutner/minecraft
+                version: {{ steps.deploy.outputs.version }}
+                address: ghcr.io/jkutner/buildpacks/minecraft@{{ steps.package.outputs.digest }}
