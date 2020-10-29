@@ -2,7 +2,7 @@ api = "0.2"
 
 [buildpack]
 id = "jkutner/minecraft"
-version = "0.1"
+version = "0.1.0"
 name = "Minecraft"
 
 [[order]]
@@ -12,4 +12,4 @@ name = "Minecraft"
 
   [[order.group]]
     id = "jkutner/minecraft-server"
-    version = "0.1"
+    version = "0.1.0"

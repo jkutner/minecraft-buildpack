@@ -5,7 +5,7 @@ on:
             - published
 jobs:
     create-package:
-        name: Create Package
+        name: Create, Publish, and Register
         runs-on:
             - ubuntu-latest
         steps:
