@@ -134,7 +134,7 @@ jobs:
               name: Register Buildpack
               uses: docker://ghcr.io/buildpacks/actions/registry:main
               with:
-                token:   ${{ secrets.GITHUB_TOKEN }}
+                token:   ${{ secrets.PUBLIC_REPO_TOKEN }}
                 id:      jkutner/minecraft
                 version: ${{ steps.version.outputs.version }}
                 address: ghcr.io/jkutner/buildpacks/minecraft@{{ steps.package.outputs.digest }}
