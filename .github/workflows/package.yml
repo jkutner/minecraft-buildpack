@@ -98,7 +98,7 @@ jobs:
                     --config package.toml
                 fi
               env:
-                PACKAGE: gcr.io/jkutner/minecraft
+                PACKAGE: ghcr.io/jkutner/minecraft/jkutner_minecraft
                 PUBLISH: "true"
                 VERSION: ${{ steps.version.outputs.version }}
             - name: Update release with digest
