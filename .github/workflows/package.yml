@@ -23,8 +23,8 @@ jobs:
 
                 set -euo pipefail
 
-                apt update -y
-                apt install jq -y
+                sudo apt update -y
+                sudo apt install jq -y
             - name: Install pack
               run: |
                 #!/usr/bin/env bash
