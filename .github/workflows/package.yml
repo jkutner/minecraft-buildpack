@@ -69,7 +69,7 @@ jobs:
 
                 set -euo pipefail
 
-                VERSION="$(cat buildpack.toml | yj -t | jq -r .buildpack.version)"
+                VERSION="$(cat "${HOME}"/buildpack.toml | yj -t | jq -r .buildpack.version)"
 
                 echo "::set-output name=version::${VERSION}"
                 echo "Selected version ${VERSION} from buildpack.toml"
