@@ -2,7 +2,7 @@
 
 This is a [Cloud Native Buildpack](https://buildpacks.io) for Minecraft. It produces a Docker image you can use to run a Minecraft server.
 
-![Logo](assets/logo.png =250x)
+![Logo](./assets/logo_small.png)
 
 Do not confuse it with the [Heroku Minecraft Buildpack](https://github.com/jkutner/heroku-buildpack-minecraft/), which uses an older Buildpack API.
 
