@@ -1,14 +1,14 @@
 [stack]
-id = "io.buildpacks.stacks.bionic"
-build-image = "jkutner/minecraft:18-build"
-run-image = "jkutner/minecraft:18-tiny"
+id = "heroku-18"
+build-image = "heroku/pack:18-build"
+run-image = "heroku/pack:18"
 
 [lifecycle]
 version = "0.9.3"
 
 [[buildpacks]]
   id = "jkutner/minecraft"
-  uri = "docker://jkutner/minecraft-cnb:latest"
+  uri = "docker://jkutner/minecraft:latest"
 
 [[order]]
   [[order.group]]

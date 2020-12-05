@@ -8,12 +8,12 @@ Do not confuse it with the [Heroku Minecraft Buildpack](https://github.com/jkutn
 
 ## Usage
 
-Install the [Pack CLI](https://buildpacks.io/docs/tools/pack/)
+First, install the [Pack CLI](https://buildpacks.io/docs/tools/pack/). Then run:
 
 ```
-$ git clone
+$ git clone https://github.com/jkutner/minecraft-buildpack
 $ cd minecraft-buildpack
-$ pack build mcapp --builder jkutner/minecraft-builder:18
+$ pack build --builder jkutner/minecraft-builder:18 mcapp
 ```
 
 Create a [free ngrok account](https://ngrok.com/) and copy your Auth token.
@@ -32,7 +32,34 @@ Server available at: 0.tcp.ngrok.io:17003
 
 Copy the `0.tcp.ngrok.io:17003` part. Then open Minecraft, and select "Multiplayer" and "Direct Connection". Paste the address as the "Server Address" and click "Join Server".
 
+## Syncing to S3
+
+By default, the server will only store your world files in the Docker container. But these files will be lost when the container is destroyed.
+
+To permenantly store your world file, you can enable syncing to an [AWS S3 bucket](https://aws.amazon.com/s3/). Minecraft keeps all of the data for the server in flat files on the file system. Thus, if you want to keep you world, you'll need to sync it to S3.
+
+First, create an [AWS account](https://aws.amazon.com/) and an S3 bucket. Then configure the bucket
+and your AWS keys like this:
+
+```
+$  docker run \
+      -e AWS_BUCKET=your-bucket-name\
+      -e AWS_ACCESS_KEY=xxx \
+      -e AWS_SECRET_KEY=xxx \
+      ...
+```
+
+The buildpack will sync your world to the bucket every 60 seconds, but this is configurable by setting the `AWS_SYNC_INTERVAL` environment variable.
+
 ## Customizing
+
+You can choose the Minecraft version by setting the `MINECRAFT_VERSION` during build, like this:
+
+```
+$ pack build -e MINECRAFT_VERSION="1.16.4" mcapp
+```
+
+Known versions are stored in the [files.json](https://github.com/jkutner/minecraft-buildpack/blob/master/minecraft/files.json). Please submit a PR to add new versions.
 
 You can change your server properties by adding [standard Minecraft configuration files](https://minecraft.gamepedia.com/Server.properties) to the repo. For example, you can change operator privileges by creating an `ops.json` like this:
 
@@ -64,6 +91,25 @@ gamemode=1
 difficulty=1
 pvp=false
 ```
+
+### ngrok
+
+You can customize ngrok by setting the `NGROK_OPTS` config variable. For example:
+
+```
+$ heroku config:set NGROK_OPTS="--remote-addr 1.tcp.ngrok.io:25565"
+```
+
+## Connecting to the server console
+
+The Minecraft server runs inside a `screen` session. Once you've started a server with `docker run`, you can use `docker exec` to connect to your server console. Get the container ID by running `docker ps`, and then start a console like this:
+
+```
+$ docker exec -it <container-id> launcher screen -r minecraft
+```
+
+**WARNING**: You are now connected to the Minecraft server. Use `Ctrl-A Ctrl-D` to exit the screen session.
+(If you hit `Ctrl-C` while in the session, you'll terminate the Minecraft server.)
 
 ## License
 

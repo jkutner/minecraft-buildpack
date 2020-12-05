@@ -16,9 +16,9 @@ ngrok_pid=$!
 
 # Do an inline sync first, then start the background job
 echo "Starting sync..."
-bin/sync
+bin/minecraft-sync
 if [ "$READ_ONLY" != "true" ]; then
-  eval "while true; do sleep ${AWS_SYNC_INTERVAL:-60}; mc-sync; done &"
+  eval "while true; do sleep ${AWS_SYNC_INTERVAL:-60}; minecraft-sync; done &"
   sync_pid=$!
 fi
 

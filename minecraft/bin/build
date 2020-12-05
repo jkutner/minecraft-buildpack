@@ -33,12 +33,11 @@ echo "eula=true" >> eula.txt
 
 mkdir -p $minecraft_layer/bin
 cp $CNB_BUILDPACK_DIR/sbin/minecraft $minecraft_layer/bin/minecraft
-cp $CNB_BUILDPACK_DIR/sbin/sync $minecraft_layer/bin/mc-sync
+cp $CNB_BUILDPACK_DIR/sbin/minecraft-sync $minecraft_layer/bin/minecraft-sync
 cp $CNB_BUILDPACK_DIR/public/index.rhtml .
-cp $CNB_BUILDPACK_DIR/server.py .
 
 chmod +x $minecraft_layer/bin/minecraft
-chmod +x $minecraft_layer/bin/mc-sync
+chmod +x $minecraft_layer/bin/minecraft-sync
 
 echo "launch = true" > ${minecraft_layer}.toml
 
