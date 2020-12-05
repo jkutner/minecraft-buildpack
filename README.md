@@ -97,7 +97,7 @@ pvp=false
 You can customize ngrok by setting the `NGROK_OPTS` config variable. For example:
 
 ```
-$ heroku config:set NGROK_OPTS="--remote-addr 1.tcp.ngrok.io:25565"
+$ docker run -e NGROK_OPTS="--remote-addr 1.tcp.ngrok.io:25565" ...
 ```
 
 ## Connecting to the server console
