@@ -1,4 +1,4 @@
-api = "0.2"
+api = "0.3"
 
 [buildpack]
 id = "jkutner/minecraft"
@@ -6,6 +6,11 @@ version = "0.1.0"
 name = "Minecraft"
 
 [[order]]
+  [[order.group]]
+    id = "heroku/python"
+    version = "0.3.0"
+    optional = true
+
   [[order.group]]
     id = "heroku/jvm"
     version = "0.1"

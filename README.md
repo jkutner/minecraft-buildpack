@@ -2,6 +2,8 @@
 
 This is a [Cloud Native Buildpack](https://buildpacks.io) for Minecraft. It produces a Docker image you can use to run a Minecraft server.
 
+![Logo](assets/logo.png)
+
 Do not confuse it with the [Heroku Minecraft Buildpack](https://github.com/jkutner/heroku-buildpack-minecraft/), which uses an older Buildpack API.
 
 ## Usage
@@ -11,8 +13,7 @@ Install the [Pack CLI](https://buildpacks.io/docs/tools/pack/)
 ```
 $ git clone
 $ cd minecraft-buildpack
-$ pack package-buildpack jkutner/minecraft -c package.toml
-$ pack build mcapp --buildpack jkutner/minecraft
+$ pack build mcapp --builder jkutner/minecraft-builder:18
 ```
 
 Create a [free ngrok account](https://ngrok.com/) and copy your Auth token.

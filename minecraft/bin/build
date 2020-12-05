@@ -17,12 +17,13 @@ echo "[minecraft]"
 
 # create a layer for minecraft
 minecraft_layer=$layers_dir/minecraft
-minecraft_version=${MINECRAFT_VERSION:-"1.16.2"}
+minecraft_version=${MINECRAFT_VERSION:-"1.16.4"}
+minecraft_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .server.\"${minecraft_version}\".url)
 
-
-# TODO install jq and read minecraft_version from files.json
-minecraft_uuid="${MINECRAFT_UUID:="a412fd69db1f81db3f511c1463fd304675244077"}"
-minecraft_url="https://launcher.mojang.com/v1/objects/${minecraft_uuid}/server.jar"
+if [ -z "$minecraft_url" ]; then
+  echo "Could not find URL for Minecraft version $minecraft_version. Please check files.json."
+  exit 1
+fi
 
 echo "Installing ${minecraft_version}"
 curl -o minecraft.jar -s -L $minecraft_url
@@ -34,6 +35,7 @@ mkdir -p $minecraft_layer/bin
 cp $CNB_BUILDPACK_DIR/sbin/minecraft $minecraft_layer/bin/minecraft
 cp $CNB_BUILDPACK_DIR/sbin/sync $minecraft_layer/bin/mc-sync
 cp $CNB_BUILDPACK_DIR/public/index.rhtml .
+cp $CNB_BUILDPACK_DIR/server.py .
 
 chmod +x $minecraft_layer/bin/minecraft
 chmod +x $minecraft_layer/bin/mc-sync

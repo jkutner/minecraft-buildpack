@@ -1,4 +1,4 @@
-name: Buildpackage
+name: Release
 on:
     release:
         types:
@@ -21,9 +21,7 @@ jobs:
                 password: ${{ secrets.GHCR_TOKEN }}
             - id: setup-pack
               name: Package Buildpack
-              uses: buildpacks/github-actions@pack-beta
-              with:
-                version: "0.14.1"
+              uses: buildpacks/github-actions/setup-pack@v3.1.0
             - id: package
               run: |
                 #!/usr/bin/env bash
@@ -34,7 +32,7 @@ jobs:
                 DIGEST="$(crane digest ${PACKAGE}:${VERSION})"
 
                 echo "::set-output name=version::$VERSION"
-                echo "::set-output name=digest::$DIGEST"
+                echo "::set-output name=address::${PACKAGE}@${DIGEST}"
               shell: bash
               env:
                 PACKAGE: ghcr.io/${{ github.repository_owner }}/buildpacks/jkutner_minecraft
@@ -45,4 +43,4 @@ jobs:
                 token:   ${{ secrets.PUBLIC_REPO_TOKEN }}
                 id:      jkutner/minecraft
                 version: ${{ steps.package.outputs.version }}
-                address: ghcr.io/jkutner/buildpacks/minecraft@${{ steps.package.outputs.digest }}
+                address: ${{ steps.package.outputs.address }}
