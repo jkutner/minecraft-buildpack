@@ -16,9 +16,7 @@ $ cd minecraft-app
 $ pack build --builder jkutner/minecraft-builder:18 minecraft-app
 ```
 
-Create a [free ngrok account](https://ngrok.com/) and copy your Auth token.
-
-Then run the server with a command like:
+Create a [free ngrok account](https://ngrok.com/) and copy your [Your Authtoken](https://dashboard.ngrok.com/auth/your-authtoken). Then run the server with a command like:
 
 ```
 $ docker run -e NGROK_API_TOKEN="<token>" -p 8080:8080 -it minecraft-app
