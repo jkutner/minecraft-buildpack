@@ -69,7 +69,7 @@ $ pack build -e MINECRAFT_VERSION="1.16.4" minecraft-app
 
 Known versions are stored in the [files.json](https://github.com/jkutner/minecraft-buildpack/blob/master/minecraft/files.json). Please submit a PR to add new versions.
 
-You can change your server properties by adding [standard Minecraft configuration files](https://minecraft.gamepedia.com/Server.properties) to the repo. For example, you can change operator privileges by creating an `ops.json` like this:
+You can change your server properties by adding [standard Minecraft configuration files](https://minecraft.gamepedia.com/Server.properties) to the same directory that you run the `pack build` command. For example, you can change operator privileges by creating an `ops.json` like this:
 
 ```json
 [
@@ -99,6 +99,8 @@ gamemode=1
 difficulty=1
 pvp=false
 ```
+
+After creating or modifying these files, you must run `pack build` again (in the same directory as the files to modified).
 
 ### ngrok
 
