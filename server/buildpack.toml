@@ -1,4 +1,4 @@
-api = "0.3"
+api = "0.4"
 
 [buildpack]
 id = "jkutner/minecraft-server"
