@@ -9,5 +9,5 @@ create: create-buildpack
 	@pack create-builder jkutner/minecraft-builder:18 -c builder.toml --pull-policy never
 
 publish:
-	@docker push jkutner/minecraft-cnb:latest
+	@docker push jkutner/minecraft:latest
 	@docker push jkutner/minecraft-builder:18
