@@ -2,10 +2,10 @@
 uri = "."
 
 [[dependencies]]
-uri = "https://github.com/heroku/heroku-buildpack-jvm-common/releases/download/v110-cnb/heroku-jvm-common-cnb-v110-cnb.tgz"
+uri = "https://github.com/heroku/heroku-buildpack-jvm-common/releases/download/v113/heroku-jvm-common-cnb-v113.tgz"
 
 [[dependencies]]
 uri = "server/"
 
 [[dependencies]]
-uri = "https://cnb-shim.herokuapp.com/v1/heroku/python?api=0.3&version=0.3.0&name=Python&stacks=heroku-18,io.buildpacks.stacks.bionic"
+uri = "https://cnb-shim.herokuapp.com/v1/heroku/python?api=0.4&version=0.4.0&name=Python&stacks=heroku-18,io.buildpacks.stacks.bionic"
