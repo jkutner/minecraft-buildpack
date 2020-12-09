@@ -2,10 +2,11 @@
 
 SHELL=/bin/bash -o pipefail
 
-create-buildpack:
+create-buildpacks:
+	@cd server && pack package-buildpack jkutner/minecraft-server:latest
 	@pack package-buildpack -c package.toml jkutner/minecraft:latest
 
-create: create-buildpack
+create: create-buildpacks
 	@pack create-builder jkutner/minecraft-builder:18 -c builder.toml --pull-policy never
 
 publish:
