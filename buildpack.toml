@@ -2,7 +2,7 @@ api = "0.4"
 
 [buildpack]
 id = "jkutner/minecraft"
-version = "0.2.1"
+version = "0.2.2"
 name = "Minecraft"
 homepage = "https://github.com/jkutner/minecraft-buildpack"
 description = "Create a Minecraft server for a Docker container"
@@ -19,4 +19,4 @@ description = "Create a Minecraft server for a Docker container"
 
   [[order.group]]
     id = "jkutner/minecraft-server"
-    version = "0.1.0"
+    version = "0.1.1"
