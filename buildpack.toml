@@ -2,7 +2,7 @@ api = "0.4"
 
 [buildpack]
 id = "jkutner/minecraft"
-version = "0.2.0"
+version = "0.2.1"
 name = "Minecraft"
 homepage = "https://github.com/jkutner/minecraft-buildpack"
 description = "Create a Minecraft server for a Docker container"
