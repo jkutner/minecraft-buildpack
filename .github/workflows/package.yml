@@ -61,7 +61,7 @@ jobs:
                 address: ${{ steps.package-server.outputs.address }}
             - id: register
               name: Register Buildpack
-              uses: docker://ghcr.io/buildpacks/actions/registry:main
+              uses: docker://ghcr.io/buildpacks/actions/registry/request-add-entry:4.0.0
               with:
                 token:   ${{ secrets.PUBLIC_REPO_TOKEN }}
                 id:      jkutner/minecraft
