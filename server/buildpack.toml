@@ -2,7 +2,7 @@ api = "0.4"
 
 [buildpack]
 id = "jkutner/minecraft-server"
-version = "0.1.1"
+version = "0.1.2"
 name = "Minecraft Server"
 homepage = "https://github.com/jkutner/minecraft-buildpack"
 description = "Installs a Minecraft server, ngrok, startup scripts, and sync worker"
