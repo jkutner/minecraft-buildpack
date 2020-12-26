@@ -45,6 +45,10 @@ cat <<EOF > ${layers_dir}/launch.toml
 [[processes]]
 type = "web"
 command = "minecraft"
+
+[[processes]]
+type = "bash"
+command = "/bin/bash"
 EOF
 
 echo ""
