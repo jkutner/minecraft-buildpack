@@ -19,4 +19,4 @@ description = "Create a Minecraft server for a Docker container"
 
   [[order.group]]
     id = "jkutner/minecraft-server"
-    version = "0.1.2"
+    version = "0.1.3"
