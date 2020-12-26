@@ -1,46 +1,50 @@
 #!/usr/bin/env bash
 
-mc_port=25566
-port=${PORT:-8080}
+if [ "$1" == "bash" ]; then
+  eval "/bin/bash"
+else
+  mc_port=25566
+  port=${PORT:-8080}
 
-if [ -z "$NGROK_API_TOKEN" ]; then
-  echo "You must set the NGROK_API_TOKEN config var to create a TCP tunnel!"
-  exit 1
+  if [ -z "$NGROK_API_TOKEN" ]; then
+    echo "You must set the NGROK_API_TOKEN config var to create a TCP tunnel!"
+    exit 1
+  fi
+
+  # Start the TCP tunnel
+  ngrok_cmd="ngrok tcp -authtoken $NGROK_API_TOKEN -log stdout --log-level debug ${NGROK_OPTS} ${mc_port}"
+  echo "Starting ngrok..."
+  eval "$ngrok_cmd | tee ngrok.log &"
+  ngrok_pid=$!
+
+  # Do an inline sync first, then start the background job
+  echo "Starting sync..."
+  minecraft-sync
+  if [ "$READ_ONLY" != "true" ]; then
+    eval "while true; do sleep ${AWS_SYNC_INTERVAL:-60}; minecraft-sync; done &"
+    sync_pid=$!
+  fi
+
+  # create server config
+  echo "server-port=${mc_port}" >> /app/server.properties
+  for f in whitelist banned-players banned-ips ops; do
+    test ! -f $f.json && echo -n "[]" > $f.json
+  done
+
+  echo "Starting: minecraft ${mc_port}"
+  eval "screen -L -h 2048 -dmS minecraft java -jar minecraft.jar nogui"
+  main_pid=$!
+
+  # Flush the logfile every second, and ensure that the logfile exists
+  screen -X "logfile 1" && sleep 1
+
+  echo "Tailing log"
+  eval "tail -f screenlog.0 &"
+  tail_pid=$!
+
+  trap "kill $ngrok_pid $main_pid $sync_pid $tail_pid" SIGTERM
+  trap "kill -9 $ngrok_pid $main_pid $sync_pid $tail_pid; exit" SIGKILL
+
+  echo "Starting HTTP server"
+  eval "ruby -rwebrick -e'WEBrick::HTTPServer.new(:BindAddress => \"0.0.0.0\", :Port => ${port}, :MimeTypes => {\"rhtml\" => \"text/html\"}, :DocumentRoot => Dir.pwd).start'"
 fi
-
-# Start the TCP tunnel
-ngrok_cmd="ngrok tcp -authtoken $NGROK_API_TOKEN -log stdout --log-level debug ${NGROK_OPTS} ${mc_port}"
-echo "Starting ngrok..."
-eval "$ngrok_cmd | tee ngrok.log &"
-ngrok_pid=$!
-
-# Do an inline sync first, then start the background job
-echo "Starting sync..."
-minecraft-sync
-if [ "$READ_ONLY" != "true" ]; then
-  eval "while true; do sleep ${AWS_SYNC_INTERVAL:-60}; minecraft-sync; done &"
-  sync_pid=$!
-fi
-
-# create server config
-echo "server-port=${mc_port}" >> /app/server.properties
-for f in whitelist banned-players banned-ips ops; do
-  test ! -f $f.json && echo -n "[]" > $f.json
-done
-
-echo "Starting: minecraft ${mc_port}"
-eval "screen -L -h 2048 -dmS minecraft java -jar minecraft.jar nogui"
-main_pid=$!
-
-# Flush the logfile every second, and ensure that the logfile exists
-screen -X "logfile 1" && sleep 1
-
-echo "Tailing log"
-eval "tail -f screenlog.0 &"
-tail_pid=$!
-
-trap "kill $ngrok_pid $main_pid $sync_pid $tail_pid" SIGTERM
-trap "kill -9 $ngrok_pid $main_pid $sync_pid $tail_pid; exit" SIGKILL
-
-echo "Starting HTTP server"
-eval "ruby -rwebrick -e'WEBrick::HTTPServer.new(:BindAddress => \"0.0.0.0\", :Port => ${port}, :MimeTypes => {\"rhtml\" => \"text/html\"}, :DocumentRoot => Dir.pwd).start'"
