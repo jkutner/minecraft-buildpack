@@ -25,13 +25,15 @@ if [ -z "$minecraft_url" ]; then
   exit 1
 fi
 
+mkdir -p $minecraft_layer/bin
+
 echo "Installing ${minecraft_version}"
 curl -o minecraft.jar -s -L $minecraft_url
+cp minecraft.jar $minecraft_layer/minecraft.jar
 
 echo "Accepting EULA"
 echo "eula=true" >> eula.txt
 
-mkdir -p $minecraft_layer/bin
 cp $CNB_BUILDPACK_DIR/sbin/minecraft $minecraft_layer/bin/minecraft
 cp $CNB_BUILDPACK_DIR/sbin/minecraft-sync $minecraft_layer/bin/minecraft-sync
 cp $CNB_BUILDPACK_DIR/public/index.rhtml .
@@ -45,6 +47,7 @@ cat <<EOF > ${layers_dir}/launch.toml
 [[processes]]
 type = "web"
 command = "minecraft"
+args = [ "minecraft.jar", "nogui" ]
 
 [[processes]]
 type = "bash"
@@ -58,9 +61,10 @@ echo "[ngrok]"
 ngrok_layer=$layers_dir/ngrok
 mkdir -p $ngrok_layer
 echo "Installing ngrok"
-curl --silent -o ngrok.zip -L "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip"
-unzip ngrok.zip -d $ngrok_layer/bin > /dev/null 2>&1
+curl --silent -o $ngrok_layer/ngrok.zip -L "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip"
+unzip $ngrok_layer/ngrok.zip -d $ngrok_layer/bin > /dev/null 2>&1
 echo "launch = true" > ${ngrok_layer}.toml
+rm $ngrok_layer/ngrok.zip
 
 echo ""
 echo "[apt]"

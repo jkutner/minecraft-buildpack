@@ -1,0 +1,10 @@
+{
+  "installer": {
+    "1.16.4-35.1.4": {
+      "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.16.4-35.1.4/forge-1.16.4-35.1.4-installer.jar"
+    },
+    "1.16.4": {
+      "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.16.4-35.1.4/forge-1.16.4-35.1.4-installer.jar"
+    }
+  }
+}

@@ -32,7 +32,7 @@ else
   done
 
   echo "Starting: minecraft ${mc_port}"
-  eval "screen -L -h 2048 -dmS minecraft java -jar minecraft.jar nogui"
+  eval "screen -L -h 2048 -dmS minecraft java -jar $@"
   main_pid=$!
 
   # Flush the logfile every second, and ensure that the logfile exists

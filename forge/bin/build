@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -eu
+
+layers_dir="$1"
+env_dir="$2/env"
+plan_path="$3"
+
+if compgen -G "${env_dir}/*" > /dev/null; then
+  for var in ${env_dir}/*; do
+    declare "$(basename ${var})=$(<${var})"
+  done
+fi
+
+echo ""
+echo "[forge]"
+
+minecraft_version=${MINECRAFT_VERSION:-"1.16.4"}
+forge_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .installer.\"${minecraft_version}\".url)
+
+if [ -z "${forge_url:-}" ]; then
+  echo "Forge not found for version $minecraft_version"
+  exit 1
+fi
+
+forge_layer=$layers_dir/forge
+mkdir -p $forge_layer
+
+curl -L  -o $forge_layer/installer.jar "$forge_url"
+
+java -jar $forge_layer/installer.jar --installServer
+
+rm $forge_layer/installer.jar
+
+mv forge-*.jar forge.jar
+
+cat <<EOF > ${layers_dir}/launch.toml
+[[processes]]
+type = "web"
+command = "minecraft"
+args = [ "forge.jar", "nogui" ]
+
+[[slices]]
+paths = ["mods"]
+
+[[slices]]
+paths = ["libraries"]
+EOF
