@@ -8,6 +8,9 @@
     },
     "1.15.1" : {
       "url": "https://launcher.mojang.com/v1/objects/bb2b6b1aefcd70dfd1892149ac3a215f6c636b07/server.jar"
+    },
+    "20w51a": {
+      "url": "https://launcher.mojang.com/v1/objects/fc87ef4c3cf1c815809249cc00ccade233b22cf5/server.jar"
     }
   }
 }
