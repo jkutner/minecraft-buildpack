@@ -57,6 +57,10 @@ $  docker run \
 
 The buildpack will sync your world to the bucket every 60 seconds, but this is configurable by setting the `AWS_SYNC_INTERVAL` environment variable. You can also customize the [`s3cmd` options](https://s3tools.org/usage) by setting the `S3CMD_OPTIONS` environment variable.
 
+## Using Forge
+
+If the buildpack detects a `mods` directory at the root level of your repository, it will run the [Forge buildpack](https://github.com/jkutner/minecraft-buildpack/tree/master/forge), which will install [Minecraft Forge](https://files.minecraftforge.net/) and use Forge at runtime. Forge will load any mods in the `mods` directory.
+
 ## Customizing
 
 You can choose the Minecraft version by setting the `MINECRAFT_VERSION` during build, like this:
