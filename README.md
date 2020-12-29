@@ -108,7 +108,7 @@ difficulty=1
 pvp=false
 ```
 
-After creating or modifying these files, you must run `pack build` again (in the same directory as the files to modified).
+After creating or modifying these files, you must run `pack build` again (in the same directory as the files to modified). See the [example directory](https://github.com/jkutner/minecraft-buildpack/tree/master/example) for a more complete setup.
 
 ### ngrok
 
