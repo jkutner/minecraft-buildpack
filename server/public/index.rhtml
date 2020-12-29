@@ -1,7 +1,17 @@
-<% open('ngrok.log') do |f| %>
-  <% f.each_line do |line| %>
-    <% if line.include?("URL:") %>
-      Server available at: <%= line.match(/tcp:\/\/(.+:[0-9]+) /)[1] %><br />
+<% if ENV[""] %>
+  <% open('ngrok.log') do |f| %>
+    <% f.each_line do |line| %>
+      <% if line.include?("URL:") %>
+        Server available at: <%= line.match(/tcp:\/\/(.+:[0-9]+) /)[1] %><br />
+      <% end %>
     <% end %>
   <% end %>
+<% else %>
+<p>
+Server is not publicly accessible!
+</p>
+<p>
+No ngrok token found. To fix this, run your server with a valid NGROK_API_TOKEN environment variable.
+See the <a href="https://github.com/jkutner/minecraft-buildpack#usage">buildpack instructions</a> for more information.
+</p>
 <% end %>
