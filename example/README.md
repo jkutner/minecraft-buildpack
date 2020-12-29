@@ -1,1 +1,1 @@
-This is an example Minecraft app. It demostrates the essential files used to configure the server
+This is an example Minecraft app. It demonstrates the essential files used to configure the server
