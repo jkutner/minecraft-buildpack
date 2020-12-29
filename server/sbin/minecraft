@@ -17,12 +17,16 @@ else
   fi
 
   # Do an inline sync first, then start the background job
-  if [ -n "$AWS_BUCKET" ]
-    echo "Starting sync..."
-    minecraft-sync
-    if [ "$READ_ONLY" != "true" ]; then
-      eval "while true; do sleep ${AWS_SYNC_INTERVAL:-60}; minecraft-sync; done &"
-      sync_pid=$!
+  if [ -n "$AWS_BUCKET" ]; then
+    if [ -n "$(which s3cmd)" ]; then
+      echo "Starting sync..."
+      minecraft-sync
+      if [ "$READ_ONLY" != "true" ]; then
+        eval "while true; do sleep ${AWS_SYNC_INTERVAL:-60}; minecraft-sync; done &"
+        sync_pid=$!
+      fi
+    else
+      echo "WARN: No s3cmd found. World will not be saved!"
     fi
   else
     echo "WARN: No AWS_BUCKET found. World will not be saved!"
