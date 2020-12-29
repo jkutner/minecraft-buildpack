@@ -169,7 +169,7 @@ install_spigot() {
     cd -
   fi
 
-  cp $spigot_layer/spigot-*.jar spigot.jar
+  cp $(ls $spigot_layer/spigot-*.jar | head -1) spigot.jar
 
   cat <<TOML > ${spigot_layer}.toml
 launch = true
