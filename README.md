@@ -16,7 +16,17 @@ $ cd minecraft-app
 $ pack build --builder jkutner/minecraft-builder:18 minecraft-app
 ```
 
-Create a [free ngrok account](https://ngrok.com/) and copy your [Your Authtoken](https://dashboard.ngrok.com/auth/your-authtoken). Then run the server with a command like:
+Then run the server with a command like:
+
+```
+$ docker run -p 25566:25566 -it minecraft-app
+```
+
+Then open Minecraft, and select "Multiplayer" and "Direct Connection". Enter the address `localhost:25566` as the "Server Address" and click "Join Server".
+
+## Connecting Remotely
+
+By default, you can only connect to your Minecraft server from your local machine. In order to connect to it remotely, you must create a [free ngrok account](https://ngrok.com/) and copy your [Your Authtoken](https://dashboard.ngrok.com/auth/your-authtoken). Then run the server with a command like:
 
 ```
 $ docker run -e NGROK_API_TOKEN="<token>" -p 8080:8080 -it minecraft-app
@@ -56,16 +66,6 @@ $  docker run \
 ```
 
 The buildpack will sync your world to the bucket every 60 seconds, but this is configurable by setting the `AWS_SYNC_INTERVAL` environment variable. You can also customize the [`s3cmd` options](https://s3tools.org/usage) by setting the `S3CMD_OPTIONS` environment variable.
-
-## Using Spigot or Forge
-
-Instead of installing the standard Minecraft distribution from Mojang, you can choose [Forge](https://files.minecraftforge.net/) or [Spigot](https://www.spigotmc.org) by setting the `MINECRAFT_DIST` env var at build time. For example:
-
-```
-$ pack build -e MINECRAFT_DIST="spigot" ...
-```
-
-The valid values are `spigot` and `forge`. Any other value will install the standard Minecraft distribution.
 
 ## Customizing
 
@@ -109,6 +109,16 @@ pvp=false
 ```
 
 After creating or modifying these files, you must run `pack build` again (in the same directory as the files to modified). See the [example directory](https://github.com/jkutner/minecraft-buildpack/tree/master/example) for a more complete setup.
+
+### Using Spigot or Forge
+
+Instead of installing the standard Minecraft distribution from Mojang, you can choose [Forge](https://files.minecraftforge.net/) or [Spigot](https://www.spigotmc.org) by setting the `MINECRAFT_DIST` env var at build time. For example:
+
+```
+$ pack build -e MINECRAFT_DIST="spigot" ...
+```
+
+The valid values are `spigot` and `forge`. Any other value will install the standard Minecraft distribution.
 
 ### ngrok
 
