@@ -11,6 +11,9 @@
     },
     "20w51a": {
       "url": "https://launcher.mojang.com/v1/objects/fc87ef4c3cf1c815809249cc00ccade233b22cf5/server.jar"
+    },
+    "1.12.2": {
+      "url": "https://launcher.mojang.com/v1/objects/886945bfb2b978778c3a0288fd7fab09d315b25f/server.jar"
     }
   },
   "forge": {
