@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -f plugins.txt ] && grep -q raspberry-juice plugins.txt; then
+if [ -f plugins.txt ] && grep -q raspberryjuice plugins.txt; then
   exit 0
 else
   exit 1
