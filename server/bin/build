@@ -201,12 +201,16 @@ init_app() {
 
 echo ""
 echo "[minecraft]"
-if [[ "${MINECRAFT_DIST:-}" == "spigot" ]]; then
-  install_spigot
-elif [[ "${MINECRAFT_DIST:-}" == "forge" ]]; then
-  install_forge
-else
+if [[ "${MINECRAFT_DIST:-}" == "mojang" ]]; then
   install_minecraft
+else
+  if [[ -d "spigot.yml" ]] || [[ -d "plugins" ]] || [[ "${MINECRAFT_DIST:-}" == "spigot" ]]; then
+    install_spigot
+  elif [[ -d "mods" ]] || [[ "${MINECRAFT_DIST:-}" == "forge" ]]; then
+    install_forge
+  else
+    install_minecraft
+  fi
 fi
 init_app
 
