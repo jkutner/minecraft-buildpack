@@ -12,5 +12,18 @@
     "20w51a": {
       "url": "https://launcher.mojang.com/v1/objects/fc87ef4c3cf1c815809249cc00ccade233b22cf5/server.jar"
     }
+  },
+  "forge": {
+    "1.16.4-35.1.4": {
+      "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.16.4-35.1.4/forge-1.16.4-35.1.4-installer.jar"
+    },
+    "1.16.4": {
+      "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.16.4-35.1.4/forge-1.16.4-35.1.4-installer.jar"
+    }
+  },
+  "spigot": {
+    "latest" : {
+      "url": "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
+    }
   }
 }

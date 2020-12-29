@@ -12,81 +12,40 @@ if compgen -G "${env_dir}/*" > /dev/null; then
   done
 fi
 
-echo ""
-echo "[minecraft]"
-
-# create a layer for minecraft
-minecraft_layer=$layers_dir/minecraft
 minecraft_version=${MINECRAFT_VERSION:-"1.16.4"}
-minecraft_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .server.\"${minecraft_version}\".url)
 
-if [ -z "$minecraft_url" ]; then
-  echo "Could not find URL for Minecraft version $minecraft_version. Please check files.json."
-  exit 1
-fi
-
-mkdir -p $minecraft_layer/bin
-
-echo "Installing ${minecraft_version}"
-curl -o minecraft.jar -s -L $minecraft_url
-cp minecraft.jar $minecraft_layer/minecraft.jar
-
-echo "Accepting EULA"
-echo "eula=true" >> eula.txt
-
-cp $CNB_BUILDPACK_DIR/sbin/minecraft $minecraft_layer/bin/minecraft
-cp $CNB_BUILDPACK_DIR/sbin/minecraft-sync $minecraft_layer/bin/minecraft-sync
-cp $CNB_BUILDPACK_DIR/public/index.rhtml .
-
-chmod +x $minecraft_layer/bin/minecraft
-chmod +x $minecraft_layer/bin/minecraft-sync
-
-echo "launch = true" > ${minecraft_layer}.toml
-
-cat <<EOF > ${layers_dir}/launch.toml
+create_launch_toml() {
+  cat <<EOF > ${layers_dir}/launch.toml
 [[processes]]
 type = "web"
 command = "minecraft"
-args = [ "minecraft.jar", "nogui" ]
+args = [ "$1", "nogui" ]
 
 [[processes]]
 type = "bash"
 command = "/bin/bash"
 EOF
+}
 
-echo ""
-echo "[ngrok]"
+install_screen() {
+  # create a layer for apt
+  apt_layer=$layers_dir/apt
+  mkdir -p $apt_layer
 
-# create a layer for ngrok
-ngrok_layer=$layers_dir/ngrok
-mkdir -p $ngrok_layer
-echo "Installing ngrok"
-curl --silent -o $ngrok_layer/ngrok.zip -L "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip"
-unzip $ngrok_layer/ngrok.zip -d $ngrok_layer/bin > /dev/null 2>&1
-echo "launch = true" > ${ngrok_layer}.toml
-rm $ngrok_layer/ngrok.zip
+  APT_CACHE_DIR="$apt_layer/apt/cache"
+  APT_STATE_DIR="$apt_layer/apt/state"
+  APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
 
-echo ""
-echo "[apt]"
+  mkdir -p "$APT_CACHE_DIR/archives/partial"
+  mkdir -p "$APT_STATE_DIR/lists/partial"
 
-# create a layer for apt
-apt_layer=$layers_dir/apt
-mkdir -p $apt_layer
+  echo "Installing screen"
+  apt-get $APT_OPTIONS update -y
+  apt-get $APT_OPTIONS -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -d install --reinstall screen
+  mkdir -p $apt_layer/var/run/screen
 
-APT_CACHE_DIR="$apt_layer/apt/cache"
-APT_STATE_DIR="$apt_layer/apt/state"
-APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
-
-mkdir -p "$APT_CACHE_DIR/archives/partial"
-mkdir -p "$APT_STATE_DIR/lists/partial"
-
-echo "Installing screen"
-apt-get $APT_OPTIONS update -y
-apt-get $APT_OPTIONS -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -d install --reinstall screen
-mkdir -p $apt_layer/var/run/screen
-
-mkdir -p $apt_layer/profile.d
-cat <<EOF >$apt_layer/profile.d/000_apt.sh
+  mkdir -p $apt_layer/profile.d
+  cat <<EOF >$apt_layer/profile.d/000_apt.sh
 export LD_LIBRARY_PATH="$apt_layer/usr/lib/x86_64-linux-gnu:$apt_layer/usr/lib/i386-linux-gnu:$apt_layer/usr/lib:\$LD_LIBRARY_PATH"
 export LIBRARY_PATH="$apt_layer/usr/lib/x86_64-linux-gnu:$apt_layer/usr/lib/i386-linux-gnu:$apt_layer/usr/lib:\$LIBRARY_PATH"
 export INCLUDE_PATH="$apt_layer/usr/include:\$INCLUDE_PATH"
@@ -96,17 +55,167 @@ export PKG_CONFIG_PATH="$apt_layer/usr/lib/x86_64-linux-gnu/pkgconfig:$apt_layer
 export SCREENDIR="$apt_layer/var/run/screen"
 EOF
 
-for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
-  dpkg -x $DEB $apt_layer/
-done
+  for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
+    dpkg -x $DEB $apt_layer/
+  done
 
-mkdir -p $apt_layer/var/run/screen
-chmod 0700 $apt_layer/var/run/screen
+  mkdir -p $apt_layer/var/run/screen
+  chmod 0700 $apt_layer/var/run/screen
 
-[ ! -d $apt_layer/bin ] && ln -s $apt_layer/usr/bin/ $apt_layer/bin
-[ ! -d $apt_layer/lib ] && ln -s $apt_layer/usr/lib/ $apt_layer/lib
+  [ ! -d $apt_layer/bin ] && ln -s $apt_layer/usr/bin/ $apt_layer/bin
+  [ ! -d $apt_layer/lib ] && ln -s $apt_layer/usr/lib/ $apt_layer/lib
 
-echo "launch = true" > ${apt_layer}.toml
-echo "cache = true" >> ${apt_layer}.toml
+  echo "launch = true" > ${apt_layer}.toml
+  echo "cache = true" >> ${apt_layer}.toml
+}
+
+install_minecraft() {
+  # create a layer for minecraft
+  minecraft_layer=$layers_dir/minecraft
+  minecraft_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .server.\"${minecraft_version}\".url)
+
+  if [ -z "$minecraft_url" ]; then
+    echo "Could not find URL for Minecraft version $minecraft_version. Please check files.json."
+    exit 1
+  fi
+
+if [ -f ${spigot_layer}.toml ] && [ "$(cat "${spigot_layer}.toml" | yj -t | jq .metadata.version -r)" == "${minecraft_version}" ]; then
+    echo "Using ${minecraft_version} from cache"
+  else
+    mkdir -p $minecraft_layer/bin
+
+    echo "Installing ${minecraft_version}"
+    curl -o minecraft.jar -s -L $minecraft_url
+  fi
+
+  cp minecraft.jar $minecraft_layer/minecraft.jar
+
+  cat <<TOML > ${minecraft_layer}.toml
+launch = true
+cache = true
+
+[metadata]
+version = "$minecraft_version"
+url = "$minecraft_url"
+TOML
+
+  create_launch_toml "minecraft.jar"
+}
+
+install_ngrok() {
+  # create a layer for ngrok
+  ngrok_layer=$layers_dir/ngrok
+  mkdir -p $ngrok_layer
+  echo "Installing ngrok"
+  curl --silent -o $ngrok_layer/ngrok.zip -L "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip"
+  unzip $ngrok_layer/ngrok.zip -d $ngrok_layer/bin > /dev/null 2>&1
+  echo "launch = true" > ${ngrok_layer}.toml
+  rm $ngrok_layer/ngrok.zip
+}
+
+install_forge() {
+  forge_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .installer.\"${minecraft_version}\".url)
+
+  if [ -z "${forge_url:-}" ]; then
+    echo "Forge not found for version $minecraft_version"
+    exit 1
+  fi
+
+  forge_layer=$layers_dir/forge
+  mkdir -p $forge_layer
+
+  curl -L  -o $forge_layer/installer.jar "$forge_url"
+
+  java -jar $forge_layer/installer.jar --installServer
+
+  rm $forge_layer/installer.jar
+
+  mv forge-*.jar forge.jar
+
+  cat <<TOML > ${forge_layer}.toml
+launch = true
+cache = true
+
+[metadata]
+version = "$minecraft_version"
+url = "$forge_url"
+TOML
+
+  create_launch_toml "forge.jar"
+
+  cat <<EOF >> ${layers_dir}/launch.toml
+[[slices]]
+paths = ["mods"]
+
+[[slices]]
+paths = ["libraries"]
+EOF
+}
+
+install_spigot() {
+  spigot_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .spigot.latest.url)
+  spigot_layer=$layers_dir/spigot
+
+  if [ -f ${spigot_layer}.toml ] && [ "$(cat "${spigot_layer}.toml" | yj -t | jq .metadata.version -r)" == "${minecraft_version}" ]; then
+    echo "Using Spigot ${minecraft_version} from cache"
+  else
+    mkdir -p $spigot_layer
+    cd $spigot_layer
+      echo "Installing Spigot BuildTools"
+      curl --silent -o BuildTools.jar -L "$spigot_url"
+      echo "Building Spigot ${minecraft_version}"
+      export MAVEN_OPTS="-Xmx2G"
+      java -Xmx2G -jar BuildTools.jar --rev "$minecraft_version"
+    cd -
+  fi
+
+  cp $spigot_layer/spigot-*.jar spigot.jar
+
+  cat <<TOML > ${spigot_layer}.toml
+launch = true
+cache = true
+
+[metadata]
+version = "$minecraft_version"
+url = "$spigot_url"
+TOML
+
+  create_launch_toml "spigot.jar"
+}
+
+init_app() {
+  echo "Accepting EULA"
+  echo "eula=true" >> eula.txt
+
+  boot_layer=$layers_dir/boot
+  mkdir -p $boot_layer/bin
+  cp $CNB_BUILDPACK_DIR/sbin/minecraft $boot_layer/bin/minecraft
+  cp $CNB_BUILDPACK_DIR/sbin/minecraft-sync $boot_layer/bin/minecraft-sync
+  cp $CNB_BUILDPACK_DIR/public/index.rhtml .
+
+  chmod +x $boot_layer/bin/minecraft
+  chmod +x $boot_layer/bin/minecraft-sync
+
+  echo "launch = true" > ${boot_layer}.toml
+}
+
+echo ""
+echo "[minecraft]"
+if [[ "${MINECRAFT_DIST:-}" == "spigot" ]]; then
+  install_spigot
+elif [[ "${MINECRAFT_DIST:-}" == "forge" ]]; then
+  install_forge
+else
+  install_minecraft
+fi
+init_app
+
+echo ""
+echo "[ngrok]"
+install_ngrok
+
+echo ""
+echo "[apt]"
+install_screen
 
 exit 0
