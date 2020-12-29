@@ -79,7 +79,7 @@ install_minecraft() {
     exit 1
   fi
 
-if [ -f ${spigot_layer}.toml ] && [ "$(cat "${spigot_layer}.toml" | yj -t | jq .metadata.version -r)" == "${minecraft_version}" ]; then
+if [ -f ${minecraft_layer}.toml ] && [ "$(cat "${minecraft_layer}.toml" | yj -t | jq .metadata.version -r)" == "${minecraft_version}" ]; then
     echo "Using ${minecraft_version} from cache"
   else
     mkdir -p $minecraft_layer/bin
