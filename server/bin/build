@@ -153,6 +153,7 @@ EOF
 }
 
 install_spigot() {
+  minecraft_version=${MINECRAFT_VERSION:-"1.12.2"}
   spigot_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .spigot.latest.url)
   spigot_layer=$layers_dir/spigot
 
