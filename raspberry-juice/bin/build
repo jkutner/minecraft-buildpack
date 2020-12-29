@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -eu
+
+layers_dir="$1"
+env_dir="$2/env"
+plan_path="$3"
+
+if compgen -G "${env_dir}/*" > /dev/null; then
+  for var in ${env_dir}/*; do
+    declare "$(basename ${var})=$(<${var})"
+  done
+fi
+
+echo ""
+echo "[raspberry-juice]"
+
+rj_layer=$layers_dir/RaspberryJuice
+mkdir -p $rj_layer
+
+rj_url="https://github.com/jkutner/RaspberryJuice"
+pushd $rj_layer
+if [ ! -d ${rj_layer}/src ]; then
+  git clone "$rj_url" src
+fi
+pushd src
+
+rj_version=$(git rev-parse HEAD)
+if [ -d ${rj_layer}/src/target ] && [ -f ${rj_layer}.toml ] && [ "$(cat "${rj_layer}.toml" | yj -t | jq .metadata.version -r)" == "${rj_version}" ]; then
+  echo "Using cached RaspberryJuice JAR"
+else
+  export MAVEN_OPTS="-Xmx2G"
+  ./mvnw clean package -DskipTests
+fi
+popd
+popd
+
+mkdir -p plugins
+cp $(ls $rj_layer/src/target/raspberryjuice-*.jar | head -1) plugins/
+
+cat <<TOML > ${rj_layer}.toml
+cache = true
+
+[metadata]
+version = "$rj_version"
+TOML

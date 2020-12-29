@@ -1,0 +1,14 @@
+api = "0.4"
+
+[buildpack]
+id = "jkutner/raspberry-juice"
+version = "0.1.0"
+name = "RaspberryJuice Minecraft Plugin"
+homepage = "https://github.com/zhuowei/RaspberryJuice"
+description = "Installs the RaspberryJuice Minecraft plugin"
+
+[[stacks]]
+id = "io.buildpacks.stacks.bionic"
+
+[[stacks]]
+id = "heroku-18"
