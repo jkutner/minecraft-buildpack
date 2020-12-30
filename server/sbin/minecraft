@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+log_date() {
+  date +"%F %H:%M:%S"
+}
+
 if [ "$1" == "bash" ]; then
   eval "/bin/bash"
 else
@@ -9,11 +13,11 @@ else
   # Start the TCP tunnel
   if [ -n "$NGROK_API_TOKEN" ]; then
     ngrok_cmd="ngrok tcp -authtoken $NGROK_API_TOKEN -log stdout --log-level debug ${NGROK_OPTS} ${mc_port}"
-    echo "Starting ngrok..."
+    echo "[$(log_date)] INFO  Starting ngrok..."
     eval "$ngrok_cmd | tee ngrok.log &"
     ngrok_pid=$!
   else
-    echo "WARN: No NGROK_API_TOKEN found. Server will not be publicly accessible!"
+    echo "[$(log_date)] WARN  No NGROK_API_TOKEN found. Server will not be publicly accessible!"
   fi
 
   # Do an inline sync first, then start the background job
@@ -26,10 +30,10 @@ else
         sync_pid=$!
       fi
     else
-      echo "WARN: No s3cmd found. World will not be saved!"
+      echo "[$(log_date)] WARN  No s3cmd found. World will not be saved!"
     fi
   else
-    echo "WARN: No AWS_BUCKET found. World will not be saved!"
+    echo "[$(log_date)] WARN  No AWS_BUCKET found. World will not be saved!"
   fi
 
   # create server config
@@ -38,20 +42,19 @@ else
     test ! -f $f.json && echo -n "[]" > $f.json
   done
 
-  echo "Starting: minecraft ${mc_port}"
+  echo "[$(log_date)] INFO  Starting Minecraft on port ${mc_port}"
   eval "screen -L -h 2048 -dmS minecraft java -jar $@"
   main_pid=$!
 
   # Flush the logfile every second, and ensure that the logfile exists
   screen -X "logfile 1" && sleep 1
 
-  echo "Tailing log"
   eval "tail -f screenlog.0 &"
   tail_pid=$!
 
   trap "kill $ngrok_pid $main_pid $sync_pid $tail_pid" SIGTERM
   trap "kill -9 $ngrok_pid $main_pid $sync_pid $tail_pid; exit" SIGKILL
 
-  echo "Starting HTTP server"
+  echo "[$(log_date)] INFO  Starting HTTP server"
   eval "ruby -rwebrick -e'WEBrick::HTTPServer.new(:BindAddress => \"0.0.0.0\", :Port => ${port}, :MimeTypes => {\"rhtml\" => \"text/html\"}, :DocumentRoot => Dir.pwd).start'"
 fi
