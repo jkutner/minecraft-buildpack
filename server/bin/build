@@ -163,7 +163,7 @@ install_spigot() {
       echo "Installing Spigot BuildTools"
       curl --silent -o BuildTools.jar -L "$spigot_url"
       echo "Building Spigot ${minecraft_version}"
-      export MAVEN_OPTS="-Xmx2G -DskipTests"
+      export MAVEN_OPTS="-Xmx2G -DskipTests=true"
       java -Xmx2G -jar BuildTools.jar --rev "$minecraft_version"
     cd -
   fi

@@ -30,7 +30,7 @@ if [ -d ${rj_layer}/src/target ] && [ -f ${rj_layer}.toml ] && [ "$(cat "${rj_la
   echo "Using cached RaspberryJuice JAR"
 else
   export MAVEN_OPTS="-Xmx2G"
-  ./mvnw clean package -DskipTests
+  ./mvnw clean package -DskipTests=true
 fi
 popd
 popd
