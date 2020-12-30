@@ -82,13 +82,11 @@ install_minecraft() {
 if [ -f ${minecraft_layer}.toml ] && [ "$(cat "${minecraft_layer}.toml" | yj -t | jq .metadata.version -r)" == "${minecraft_version}" ]; then
     echo "Using ${minecraft_version} from cache"
   else
-    mkdir -p $minecraft_layer/bin
-
     echo "Installing ${minecraft_version}"
-    curl -o minecraft.jar -s -L $minecraft_url
+    curl -o $minecraft_layer/minecraft.jar -s -L $minecraft_url
   fi
 
-  cp minecraft.jar $minecraft_layer/minecraft.jar
+  cp $minecraft_layer/minecraft.jar minecraft.jar
 
   cat <<TOML > ${minecraft_layer}.toml
 launch = true
