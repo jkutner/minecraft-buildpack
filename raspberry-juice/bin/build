@@ -15,7 +15,7 @@ fi
 echo ""
 echo "[raspberry-juice]"
 
-rj_layer=$layers_dir/RaspberryJuice
+rj_layer=$layers_dir/plugin
 mkdir -p $rj_layer
 
 rj_url="https://github.com/jkutner/RaspberryJuice"
