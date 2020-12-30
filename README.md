@@ -13,6 +13,7 @@ First, install the [Pack CLI](https://buildpacks.io/docs/tools/pack/). Then run:
 ```
 $ mkdir minecraft-app
 $ cd minecraft-app
+$ pack config trusted-builders add jkutner/minecraft-builder:18
 $ pack build --builder jkutner/minecraft-builder:18 minecraft-app
 ```
 
