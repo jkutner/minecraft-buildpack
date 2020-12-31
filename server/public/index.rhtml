@@ -22,12 +22,12 @@ td, th {
       <% if line.include?("url=tcp://") %>
         <% if line.include?("name=main") %>
           <tr>
-            <td>Server</td>
+            <td>Minecraft</td>
             <td><%= line.match(/tcp:\/\/(.+:[0-9]+)/)[1] %></td>
           </tr>
         <% elsif line.include?("name=aux") %>
           <tr>
-            <td>Auxillary</td>
+            <td>RaspberryJuice</td>
             <td><%= line.match(/tcp:\/\/(.+:[0-9]+)/)[1] %></td>
           </tr>
         <% end %>

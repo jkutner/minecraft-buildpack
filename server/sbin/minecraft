@@ -4,12 +4,15 @@ log_date() {
   date +"%F %H:%M:%S"
 }
 
-get_aux_port() {
+aux_port() {
+  local port="${AUX_PORT:-4711}"
   if [ -f plugins/RaspberryJuice/config.yml ]; then
-    echo "$(ruby -r yaml -e "puts YAML.load_file('plugins/RaspberryJuice/config.yml')['port']")"
-  else
-    echo "${AUX_PORT:-4711}"
+    local config_port="$(ruby -r yaml -e "puts YAML.load_file('plugins/RaspberryJuice/config.yml')['port']")"
+    if [ -n "$config_port" ]; then
+      port="$config_port"
+    fi
   fi
+  echo "$port"
 }
 
 if [ "$1" == "bash" ]; then
@@ -29,7 +32,7 @@ tunnels:
     addr: ${mc_port}
   aux:
     proto: tcp
-    addr: ${aux_port}
+    addr: $(aux_port)
 YAML
     fi
 
