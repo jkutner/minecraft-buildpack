@@ -17,6 +17,7 @@ aux_port() {
 
 load_config() {
   if [ -d config ]; then
+    echo "[$(log_date)] INFO  Loading custom configuration ($(ls config/))"
     cp config/* .
   fi
 }
