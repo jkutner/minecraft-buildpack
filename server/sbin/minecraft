@@ -8,7 +8,7 @@ get_aux_port() {
   if [ -f plugins/RaspberryJuice/config.yml ]; then
     echo "$(ruby -r yaml -e "puts YAML.load_file('plugins/RaspberryJuice/config.yml')['port']")"
   else
-    echo "${AUX_PORT:-}"
+    echo "${AUX_PORT:-4711}"
   fi
 }
 
@@ -27,11 +27,6 @@ tunnels:
   main:
     proto: tcp
     addr: ${mc_port}
-YAML
-
-      aux_port="$(get_aux_port)"
-      if [ -n "${aux_port:-}" ]; then
-        cat <<YAML >> .ngrok2/ngrok.yml
   aux:
     proto: tcp
     addr: ${aux_port}
@@ -39,7 +34,7 @@ YAML
       fi
     fi
 
-    ngrok_cmd="ngrok start --config .ngrok2/ngrok.yml -authtoken $NGROK_API_TOKEN -log stdout --log-level debug ${NGROK_OPTS} main $([ -n "$aux_port" ] && echo "aux")"
+    ngrok_cmd="ngrok start --config .ngrok2/ngrok.yml -authtoken $NGROK_API_TOKEN -log stdout --log-level debug $NGROK_OPTS main aux"
     echo "[$(log_date)] INFO  Starting ngrok on port ${mc_port}..."
     eval "$ngrok_cmd | tee ngrok.log &"
     ngrok_pid=$!
