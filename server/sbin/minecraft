@@ -15,11 +15,19 @@ aux_port() {
   echo "$port"
 }
 
+load_config() {
+  if [ -d config ]; then
+    cp config/* .
+  fi
+}
+
 if [ "$1" == "bash" ]; then
   eval "/bin/bash"
 else
   mc_port=25566
   port=${PORT:-8080}
+
+  load_config
 
   # Start the TCP tunnel
   if [ -n "$NGROK_API_TOKEN" ]; then
