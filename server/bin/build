@@ -29,7 +29,7 @@ EOF
 
 install_screen() {
   # create a layer for apt
-  apt_layer=$layers_dir/apt
+  local apt_layer=$layers_dir/apt
   mkdir -p $apt_layer
 
   APT_CACHE_DIR="$apt_layer/apt/cache"
@@ -71,8 +71,8 @@ EOF
 
 install_minecraft() {
   # create a layer for minecraft
-  minecraft_layer=$layers_dir/minecraft
-  minecraft_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .server.\"${minecraft_version}\".url)
+  local minecraft_layer=$layers_dir/minecraft
+  local minecraft_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .server.\"${minecraft_version}\".url)
 
   if [ -z "$minecraft_url" ]; then
     echo "Could not find URL for Minecraft version $minecraft_version. Please check files.json."
@@ -102,7 +102,7 @@ TOML
 
 install_ngrok() {
   # create a layer for ngrok
-  ngrok_layer=$layers_dir/ngrok
+  local ngrok_layer=$layers_dir/ngrok
   mkdir -p $ngrok_layer
   echo "Installing ngrok"
   curl --silent -o $ngrok_layer/ngrok.zip -L "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip"
@@ -151,9 +151,9 @@ EOF
 }
 
 install_spigot() {
-  minecraft_version=${MINECRAFT_VERSION:-"1.12.2"}
-  spigot_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .spigot.latest.url)
-  spigot_layer=$layers_dir/spigot
+  local minecraft_version=${MINECRAFT_VERSION:-"1.12.2"}
+  local spigot_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .spigot.latest.url)
+  local spigot_layer=$layers_dir/spigot
 
   if [ -f ${spigot_layer}.toml ] && [ "$(cat "${spigot_layer}.toml" | yj -t | jq .metadata.version -r)" == "${minecraft_version}" ]; then
     echo "Using Spigot ${minecraft_version} from cache"
@@ -186,7 +186,7 @@ init_app() {
   echo "Accepting EULA"
   echo "eula=true" >> eula.txt
 
-  boot_layer=$layers_dir/boot
+  local boot_layer=$layers_dir/boot
   mkdir -p $boot_layer/bin
   cp $CNB_BUILDPACK_DIR/sbin/minecraft $boot_layer/bin/minecraft
   cp $CNB_BUILDPACK_DIR/sbin/minecraft-sync $boot_layer/bin/minecraft-sync

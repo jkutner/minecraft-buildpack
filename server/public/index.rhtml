@@ -1,12 +1,41 @@
-<% if ENV[""] %>
+<html>
+<head>
+<style>
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+</style>
+</head>
+<body>
+
+<% if ENV["NGROK_API_TOKEN"] %>
   <% open('ngrok.log') do |f| %>
+    <h2>Server available</h2>
+    <table>
+      <tr>
+        <th>&nbsp;</th>
+        <th>Address</th>
+      </tr>
     <% f.each_line do |line| %>
-      <% if line.include?("URL:") %>
-        Server available at: <%= line.match(/tcp:\/\/(.+:[0-9]+) /)[1] %><br />
+      <% if line.include?("url=tcp://") %>
+        <% if line.include?("name=main") %>
+          <tr>
+            <td>Server</td>
+            <td><%= line.match(/tcp:\/\/(.+:[0-9]+)/)[1] %></td>
+          </tr>
+        <% elsif line.include?("name=aux") %>
+          <tr>
+            <td>Auxillary</td>
+            <td><%= line.match(/tcp:\/\/(.+:[0-9]+)/)[1] %></td>
+          </tr>
+        <% end %>
       <% end %>
     <% end %>
   <% end %>
 <% else %>
+<h2>Unavailable</h2>
 <p>
 Server is not publicly accessible!
 </p>
@@ -15,3 +44,6 @@ No ngrok token found. To fix this, run your server with a valid NGROK_API_TOKEN 
 See the <a href="https://github.com/jkutner/minecraft-buildpack#usage">buildpack instructions</a> for more information.
 </p>
 <% end %>
+
+</body>
+</html>
