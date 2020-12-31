@@ -31,7 +31,6 @@ tunnels:
     proto: tcp
     addr: ${aux_port}
 YAML
-      fi
     fi
 
     ngrok_cmd="ngrok start --config .ngrok2/ngrok.yml -authtoken $NGROK_API_TOKEN -log stdout --log-level debug $NGROK_OPTS main aux"
