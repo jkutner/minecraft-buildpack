@@ -19,11 +19,11 @@ rj_layer=$layers_dir/plugin
 mkdir -p $rj_layer
 
 rj_url="https://github.com/jkutner/RaspberryJuice"
-pushd $rj_layer
+pushd $rj_layer > /dev/null
 if [ ! -d ${rj_layer}/src ]; then
   git clone "$rj_url" src
 fi
-pushd src
+pushd src > /dev/null
 
 rj_version=$(git rev-parse HEAD)
 if [ -d ${rj_layer}/src/target ] && [ -f ${rj_layer}.toml ] && [ "$(cat "${rj_layer}.toml" | yj -t | jq .metadata.version -r)" == "${rj_version}" ]; then
@@ -32,8 +32,8 @@ else
   export MAVEN_OPTS="-Xmx2G"
   ./mvnw clean package -DskipTests=true
 fi
-popd
-popd
+popd > /dev/null
+popd > /dev/null
 
 mkdir -p plugins
 cp $(ls $rj_layer/src/target/raspberryjuice-*.jar | head -1) plugins/
