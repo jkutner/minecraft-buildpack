@@ -12,9 +12,8 @@ if compgen -G "${env_dir}/*" > /dev/null; then
   done
 fi
 
-minecraft_version=${MINECRAFT_VERSION:-"1.16.4"}
-
 create_launch_toml() {
+  echo "Creating launch configuration for ${1}"
   cat <<EOF > ${layers_dir}/launch.toml
 [[processes]]
 type = "web"
@@ -71,19 +70,25 @@ EOF
 
 install_minecraft() {
   # create a layer for minecraft
+  local minecraft_version=${MINECRAFT_VERSION:-"1.16.4"}
   local minecraft_layer=$layers_dir/minecraft
-  local minecraft_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .server.\"${minecraft_version}\".url)
 
-  if [ -z "$minecraft_url" ]; then
-    echo "Could not find URL for Minecraft version $minecraft_version. Please check files.json."
-    exit 1
-  fi
-
-if [ -f ${minecraft_layer}.toml ] && [ "$(cat "${minecraft_layer}.toml" | yj -t | jq .metadata.version -r)" == "${minecraft_version}" ]; then
-    echo "Using ${minecraft_version} from cache"
+  local minecraft_url
+  if [ -f ${minecraft_layer}.toml ] && [ "$(cat "${minecraft_layer}.toml" | yj -t | jq .metadata.version -r)" == "${minecraft_version}" ]; then
+    minecraft_url="$(cat "${minecraft_layer}.toml" | yj -t | jq .metadata.url -r)"
+    local minecraft_host="$(ruby -r uri -e "puts URI.parse(\"$minecraft_url\").host")"
+    echo "Using cached ${minecraft_version} from ${minecraft_host}"
+    touch ${minecraft_layer}.toml
   else
-    echo "Installing ${minecraft_version}"
-    curl -o $minecraft_layer/minecraft.jar -s -L $minecraft_url
+    minecraft_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .server.\"${minecraft_version}\".url)
+    if [ -z "$minecraft_url" ]; then
+      echo "Could not find URL for Minecraft version $minecraft_version. Please check files.json."
+      exit 1
+    fi
+    local minecraft_host="$(ruby -r uri -e "puts URI.parse(\"$minecraft_url\").host")"
+    echo "Installing ${minecraft_version} from ${minecraft_host}"
+    mkdir -p $minecraft_layer
+    curl -o ${minecraft_layer}/minecraft.jar -s -L "$minecraft_url"
   fi
 
   cp $minecraft_layer/minecraft.jar minecraft.jar
@@ -112,6 +117,7 @@ install_ngrok() {
 }
 
 install_forge() {
+  local minecraft_version=${MINECRAFT_VERSION:-"1.16.4"}
   forge_url=$(cat $CNB_BUILDPACK_DIR/files.json | jq -r .installer.\"${minecraft_version}\".url)
 
   if [ -z "${forge_url:-}" ]; then
