@@ -1,18 +1,31 @@
 #!/usr/bin/env bash
 
+sync_dir() {
+  local syncdir="$1"
+  local world_name="${WORLD_NAME:-default}"
+  if [ -d $syncdir ]; then
+    s3cmd ${S3CMD_OPTIONS:-} sync $syncdir/ s3://${AWS_BUCKET}/${world_name}/${syncdir}/
+  else
+    mkdir -p $syncdir/
+    cd $syncdir/
+    s3cmd ${S3CMD_OPTIONS:-} get --recursive s3://${AWS_BUCKET}/${world_name}/${syncdir}/
+    cd ..
+  fi
+}
+
 if [ -n "$AWS_BUCKET" ] && [ -n "$(which s3cmd)" ]; then
-  cat << EOF > .s3cfg
+  if [ -f config/.s3cfg ]; then
+    cp config/.s3cfg .s3cfg
+  else
+    cat << EOF > .s3cfg
 [default]
 access_key = ${AWS_ACCESS_KEY}
 secret_key = ${AWS_SECRET_KEY}
 EOF
-  if [ -d world ]; then
-    s3cmd ${S3CMD_OPTIONS:-} sync world/ s3://${AWS_BUCKET}/world/
-  else
-    mkdir -p world
-    cd world
-    s3cmd ${S3CMD_OPTIONS:-} get --recursive s3://${AWS_BUCKET}/world/
-    cd ..
   fi
+  sync_dir "world"
+  sync_dir "world_the_end"
+  sync_dir "world_nether"
+  sync_dir "extra"
   rm .s3cfg
 fi
