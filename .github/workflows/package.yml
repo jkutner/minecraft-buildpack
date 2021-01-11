@@ -20,9 +20,10 @@ jobs:
                 username: ${{ github.repository_owner }}
                 password: ${{ secrets.GHCR_TOKEN }}
             - id: setup-pack
-              name: Package Buildpack
+              name: Setup Pack
               uses: buildpacks/github-actions/setup-pack@v3.1.0
             - id: package
+              name: Package Buildpack
               run: |
                 #!/usr/bin/env bash
                 set -euo pipefail

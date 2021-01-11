@@ -2,7 +2,7 @@
 uri = "."
 
 [[dependencies]]
-uri = "https://github.com/heroku/heroku-buildpack-jvm-common/releases/download/v113/heroku-jvm-common-cnb-v113.tgz"
+uri = "https://github.com/heroku/heroku-buildpack-jvm-common/releases/download/v114/heroku-jvm-common-cnb-v114.tgz"
 
 [[dependencies]]
 uri = "server/"
