@@ -1,5 +1,7 @@
 # Minecraft Buildpack
 
+![Version](https://img.shields.io/badge/dynamic/json?url=https://cnb-registry-api.herokuapp.com/api/v1/buildpacks/jkutner/minecraft&label=Version&query=$.latest.version)
+
 This is a [Cloud Native Buildpack](https://buildpacks.io) for Minecraft. It produces a Docker image you can use to run a Minecraft server.
 
 ![Logo](./assets/logo_small.png)
