@@ -2,10 +2,14 @@ api = "0.4"
 
 [buildpack]
 id = "jkutner/minecraft"
-version = "0.2.3"
+version = "0.2.4"
 name = "Minecraft"
 homepage = "https://github.com/jkutner/minecraft-buildpack"
 description = "Create a Minecraft server for a Docker container"
+keywords = ["minecraft", "game"]
+
+[[buildpack.licenses]]
+type = "MIT"
 
 [[order]]
   [[order.group]]
