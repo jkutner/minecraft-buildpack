@@ -1,7 +1,7 @@
 [stack]
 id = "heroku-18"
-build-image = "heroku/pack:18-build"
-run-image = "heroku/pack:18"
+build-image = "heroku/heroku:18-cnb-build"
+run-image = "heroku/heroku:18-cnb"
 
 [lifecycle]
 version = "0.9.3"
